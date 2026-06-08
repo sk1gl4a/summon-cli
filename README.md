@@ -1,5 +1,9 @@
 # summon-cli
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="summon-cli picker" width="720">
+</p>
+
 Terminal launcher for local AI CLIs. Run `cli`, pick a tool, launch it.
 
 Supported: Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, opencode CLI. Missing tools show dimmed.
