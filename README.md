@@ -21,14 +21,13 @@ Move with arrows or `j/k` or `1-9`. `Enter` launches, `Esc` quits.
 
 ## Commands
 
-- `summon` open the picker (or your default)
-- `summon menu` always open the picker
+- `summon` open the picker
 - `summon reorder` set the order
-- `summon default <tool>` launch one directly (`off` clears, no arg = pick)
+- `summon default <tool>` start the cursor on it (`off` clears, no arg = pick)
 - `summon alias <name>` add another command name (e.g. `summon alias cli`)
 - `summon help`
 
-Flag: `--no-logo`. Args after `--` go to the launched tool.
+Flags: `--no-logo` / `--logo` toggle the side logo (remembered). Args after `--` go to the launched tool.
 
 ## Config
 

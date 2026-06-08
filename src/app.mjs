@@ -149,10 +149,13 @@ function LogoPanel({tool}) {
   );
 }
 
-export function App({items = tools, logo = false, onSelect, onCancel}) {
+export function App({items = tools, logo = false, initialId = null, onSelect, onCancel}) {
   const {exit} = useApp();
   const {stdout} = useStdout();
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => {
+    const idx = items.findIndex(tool => tool.id === initialId);
+    return idx >= 0 ? idx : 0;
+  });
   const [tick, setTick] = useState(0);
   const [spin, setSpin] = useState(0);
   const [flash, setFlash] = useState(0);

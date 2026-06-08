@@ -23,7 +23,14 @@ const args = rawArgs.filter(arg => !arg.startsWith('-'));
 const command = args[0];
 
 const config = loadConfig();
-const logo = flags.has('--no-logo') ? false : (flags.has('--logo') || config.logo);
+let logo = config.logo;
+if (flags.has('--no-logo')) {
+  logo = false;
+  saveConfig({logo: false});
+} else if (flags.has('--logo')) {
+  logo = true;
+  saveConfig({logo: true});
+}
 const items = orderTools(config.order);
 
 if (process.env.CLI_LEVEL_SNAPSHOT === '1') {
@@ -48,27 +55,15 @@ switch (command) {
   case 'alias':
     runAlias(args[1]);
     break;
-  case 'menu':
-    await runMenu({forceMenu: true});
-    break;
   case undefined:
-    await runMenu({forceMenu: false});
+    await runMenu();
     break;
   default:
     process.stderr.write(`${PROG}: unknown command '${command}'. Try '${PROG} --help'.\n`);
     process.exit(2);
 }
 
-async function runMenu({forceMenu}) {
-  if (!forceMenu && config.default) {
-    const tool = tools.find(item => item.id === config.default);
-    if (tool && commandExists(tool.command)) {
-      process.exitCode = await runCommand(tool.command, forwardedArgs);
-      return;
-    }
-    process.stderr.write(`${PROG}: default '${config.default}' unavailable, opening menu.\n`);
-  }
-
+async function runMenu() {
   if (!canRenderTui) {
     process.stdout.write(renderSnapshot(0));
     process.stderr.write(`${PROG}: interactive terminal required for selection.\n`);
@@ -114,7 +109,7 @@ async function runReorder() {
 async function runDefault(target) {
   if (target === 'off' || target === 'none') {
     saveConfig({default: null});
-    process.stdout.write(`Default cleared. '${PROG}' now opens the menu.\n`);
+    process.stdout.write(`Default cleared. The cursor starts on the first tool.\n`);
     return;
   }
 
@@ -125,7 +120,7 @@ async function runDefault(target) {
       process.exit(2);
     }
     saveConfig({default: tool.id});
-    process.stdout.write(`Default set to ${tool.label}. '${PROG}' now launches it directly (use '${PROG} menu' for the picker).\n`);
+    process.stdout.write(`Default set to ${tool.label}. The menu now opens with the cursor on it.\n`);
     return;
   }
 
@@ -137,7 +132,7 @@ async function runDefault(target) {
     return;
   }
   saveConfig({default: selected.id});
-  process.stdout.write(`Default set to ${selected.label}. '${PROG}' now launches it directly (use '${PROG} menu' for the picker).\n`);
+  process.stdout.write(`Default set to ${selected.label}. The menu now opens with the cursor on it.\n`);
 }
 
 function runAlias(name) {
@@ -165,6 +160,7 @@ function chooseTool() {
     instance = render(React.createElement(App, {
       items,
       logo,
+      initialId: config.default,
       onCancel: () => {
         instance.unmount();
         resolve(null);
@@ -239,16 +235,15 @@ function printHelp() {
 Summon your AI CLI. A terminal launcher.
 
 Commands:
-  (none)            Open the picker, or launch your default if one is set
-  menu              Always open the picker (ignore the default)
+  (none)            Open the picker
   reorder           Set the order tools appear in
-  default [tool]    Launch <tool> directly on '${PROG}'; no tool = pick one;
-                    'off' clears it
+  default [tool]    Start the cursor on <tool>; no tool = pick one; 'off' clears
   alias <name>      Install a second command name for this launcher
   help              Show this help
 
 Options:
-  --no-logo         Hide the side logo (shown by default)
+  --no-logo         Hide the side logo and remember it
+  --logo            Show the side logo and remember it
 
 Anything after -- is passed to the launched tool, e.g. ${PROG} -- --version
 Config: ${configLocation()}
