@@ -1,6 +1,6 @@
 {
   "name": "summon-cli",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Summon your AI CLI. Terminal launcher for Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, and opencode CLI.",
   "type": "module",
   "bin": {

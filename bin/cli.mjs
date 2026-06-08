@@ -31,15 +31,25 @@ if (flags.has('--no-logo')) {
   logo = true;
   saveConfig({logo: true});
 }
-const items = orderTools(config.order);
+const items = orderTools(config.order, config.customTools);
 
 if (process.env.CLI_LEVEL_SNAPSHOT === '1') {
-  process.stdout.write(renderSnapshot(Number(process.env.CLI_LEVEL_ACTIVE || 0)));
+  process.stdout.write(renderSnapshot(Number(process.env.CLI_LEVEL_ACTIVE || 0), items));
   process.exit(0);
 }
 
 if (flags.has('--help') || flags.has('-h') || command === 'help') {
   printHelp();
+  process.exit(0);
+}
+
+if (flags.has('--add')) {
+  runAdd(args[0], args[1]);
+  process.exit(0);
+}
+
+if (flags.has('--remove') || flags.has('--rm')) {
+  runRemove(args[0]);
   process.exit(0);
 }
 
@@ -65,7 +75,7 @@ switch (command) {
 
 async function runMenu() {
   if (!canRenderTui) {
-    process.stdout.write(renderSnapshot(0));
+    process.stdout.write(renderSnapshot(0, items));
     process.stderr.write(`${PROG}: interactive terminal required for selection.\n`);
     process.exit(2);
   }
@@ -86,6 +96,7 @@ async function runReorder() {
   const order = await new Promise(resolve => {
     let instance;
     instance = render(React.createElement(ReorderApp, {
+      items,
       onCancel: () => {
         instance.unmount();
         resolve(null);
@@ -133,6 +144,48 @@ async function runDefault(target) {
   }
   saveConfig({default: selected.id});
   process.stdout.write(`Default set to ${selected.label}. The menu now opens with the cursor on it.\n`);
+}
+
+function runAdd(name, label) {
+  if (!name || !/^[a-zA-Z0-9._-]+$/.test(name)) {
+    process.stderr.write(`${PROG}: usage: ${PROG} --add <command> [label]\n`);
+    process.exit(2);
+  }
+
+  const id = name.toLowerCase();
+  if (tools.some(t => t.id === id)) {
+    process.stderr.write(`${PROG}: '${id}' is a built-in tool already.\n`);
+    process.exit(2);
+  }
+
+  const current = loadConfig().customTools || [];
+  if (current.some(t => t.id === id)) {
+    process.stderr.write(`${PROG}: '${id}' is already in your list.\n`);
+    process.exit(2);
+  }
+
+  const labelText = label || (name.charAt(0).toUpperCase() + name.slice(1));
+  const next = [...current, {id, label: labelText, command: name, hint: 'Custom provider'}];
+  saveConfig({customTools: next});
+  process.stdout.write(`Added '${labelText}' (command: ${name}) to the menu.\n`);
+}
+
+function runRemove(name) {
+  if (!name) {
+    process.stderr.write(`${PROG}: usage: ${PROG} --remove <id>\n`);
+    process.exit(2);
+  }
+
+  const id = name.toLowerCase();
+  const current = loadConfig().customTools || [];
+  const next = current.filter(t => t.id !== id);
+  if (next.length === current.length) {
+    process.stderr.write(`${PROG}: no custom tool '${id}'. List: ${current.map(t => t.id).join(', ') || '(none)'}.\n`);
+    process.exit(2);
+  }
+
+  saveConfig({customTools: next});
+  process.stdout.write(`Removed '${id}'.\n`);
 }
 
 function runAlias(name) {
@@ -238,10 +291,12 @@ Commands:
   (none)            Open the picker
   reorder           Set the order tools appear in
   default [tool]    Start the cursor on <tool>; no tool = pick one; 'off' clears
-  alias <name>      Install a second command name for this launcher
+  alias <name>      Install a second shell command name for this launcher
   help              Show this help
 
 Options:
+  --add <cmd> [lbl] Add a custom CLI to the menu (e.g. --add grok "Grok Build")
+  --remove <id>     Remove a custom CLI from the menu
   --no-logo         Hide the side logo and remember it
   --logo            Show the side logo and remember it
 

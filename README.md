@@ -6,9 +6,9 @@
 
 Terminal launcher for local AI CLIs. Run `summon`, pick a tool, launch it.
 
-Supported: Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, opencode CLI. Missing tools show dimmed.
+Built-in: Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, opencode CLI. Missing tools show dimmed. Add your own with `--add`.
 
-> Pre-release (0.1.0).
+> Pre-release (0.2.0).
 
 ## Install
 
@@ -24,10 +24,19 @@ Move with arrows or `j/k` or `1-9`. `Enter` launches, `Esc` quits.
 - `summon` open the picker
 - `summon reorder` set the order
 - `summon default <tool>` start the cursor on it (`off` clears, no arg = pick)
-- `summon alias <name>` add another command name (e.g. `summon alias cli`)
+- `summon alias <name>` install a second shell command name for the launcher
 - `summon help`
 
-Flags: `--no-logo` / `--logo` toggle the side logo (remembered). Args after `--` go to the launched tool.
+## Flags
+
+- `--add <cmd> [label]` add a custom CLI to the menu. Example:
+  ```sh
+  summon --add grok "Grok Build"
+  ```
+  Adds an entry that runs `grok` and shows as `Grok Build` with hint `Custom provider`.
+- `--remove <id>` remove a custom CLI from the menu.
+- `--no-logo` / `--logo` toggle the side logo (remembered).
+- Args after `--` go to the launched tool.
 
 ## Config
 

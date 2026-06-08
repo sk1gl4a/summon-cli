@@ -8,7 +8,8 @@ const configPath = join(baseDir, 'summon-cli', 'config.json');
 const DEFAULTS = {
   order: [],
   logo: true,
-  default: null
+  default: null,
+  customTools: []
 };
 
 export function loadConfig() {

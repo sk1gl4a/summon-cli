@@ -249,15 +249,15 @@ export function App({items = tools, logo = false, initialId = null, onSelect, on
   );
 }
 
-export function ReorderApp({onDone, onCancel}) {
+export function ReorderApp({items = tools, onDone, onCancel}) {
   const {exit} = useApp();
   const [order, setOrder] = useState([]);
   const [active, setActive] = useState(0);
 
   const seekUnpicked = (from, dir, taken) => {
-    for (let step = 0; step <= tools.length; step += 1) {
-      const index = (from + dir * step + tools.length * (step + 1)) % tools.length;
-      if (!taken.has(tools[index].id)) {
+    for (let step = 0; step <= items.length; step += 1) {
+      const index = (from + dir * step + items.length * (step + 1)) % items.length;
+      if (!taken.has(items[index].id)) {
         return index;
       }
     }
@@ -290,13 +290,13 @@ export function ReorderApp({onDone, onCancel}) {
     }
 
     if (key.return) {
-      const id = tools[active].id;
+      const id = items[active].id;
       if (taken.has(id)) {
         return;
       }
 
       const next = [...order, id];
-      if (next.length === tools.length) {
+      if (next.length === items.length) {
         exit();
         onDone(next);
         return;
@@ -314,7 +314,7 @@ export function ReorderApp({onDone, onCancel}) {
         React.createElement(Text, {color: dimGray}, '  pick first to last')
       ),
       React.createElement(Box, {flexDirection: 'column', gap: 0},
-        tools.map((tool, index) => {
+        items.map((tool, index) => {
           const pos = order.indexOf(tool.id);
           const picked = pos >= 0;
           const isActive = index === active && !picked;
@@ -509,9 +509,10 @@ function renderPlainLine(tool, index, activeIndex) {
   return `${arrow} ${label.padEnd(16)} ${tool.hint}`;
 }
 
-export function renderSnapshot(activeIndex = 0) {
-  const bounded = Math.max(0, Math.min(tools.length - 1, activeIndex));
-  return `${tools.map((tool, index) => renderPlainLine(tool, index, bounded)).join('\n')}\n`;
+export function renderSnapshot(activeIndex = 0, items = null) {
+  const list = items || tools;
+  const bounded = Math.max(0, Math.min(list.length - 1, activeIndex));
+  return `${list.map((tool, index) => renderPlainLine(tool, index, bounded)).join('\n')}\n`;
 }
 
 function commandExists(command) {
@@ -545,8 +546,26 @@ function nextAvailable(current, availability, items) {
 }
 
 // Reorder canonical tools by an array of ids; unknown ids ignored, missing appended.
-export function orderTools(order = []) {
-  const byId = new Map(tools.map(tool => [tool.id, tool]));
+export function buildCustomTool({id, label, command, hint, palette} = {}) {
+  if (!id) return null;
+  return {
+    id,
+    label: label || id,
+    command: command || id,
+    hint: hint || 'Custom provider',
+    palette: palette && palette.length ? palette : ['#9aa0a6', '#cdcdcd']
+  };
+}
+
+export function orderTools(order = [], customTools = []) {
+  const all = [...tools];
+  for (const raw of customTools) {
+    const tool = buildCustomTool(raw);
+    if (!tool) continue;
+    if (all.some(t => t.id === tool.id)) continue;
+    all.push(tool);
+  }
+  const byId = new Map(all.map(tool => [tool.id, tool]));
   const result = [];
   for (const id of order) {
     if (byId.has(id)) {
@@ -554,7 +573,7 @@ export function orderTools(order = []) {
       byId.delete(id);
     }
   }
-  for (const tool of tools) {
+  for (const tool of all) {
     if (byId.has(tool.id)) {
       result.push(tool);
     }
