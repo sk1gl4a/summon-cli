@@ -1,7 +1,7 @@
 {
   "name": "summon-cli",
   "version": "0.1.0",
-  "description": "Summon your AI CLI. Terminal launcher for Codex, Claude, Antigravity, Cursor, Copilot, and opencode.",
+  "description": "Summon your AI CLI. Terminal launcher for Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, and opencode CLI.",
   "type": "module",
   "bin": {
     "cli": "./bin/cli.mjs"
@@ -20,13 +20,17 @@
     "cli",
     "tui",
     "ink",
+    "react",
+    "terminal",
     "launcher",
     "selector",
     "ai",
-    "codex",
-    "claude",
-    "copilot",
-    "cursor",
+    "agent",
+    "developer-tools",
+    "codex-cli",
+    "claude-code",
+    "github-copilot-cli",
+    "cursor-cli",
     "opencode",
     "antigravity"
   ],

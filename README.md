@@ -2,7 +2,7 @@
 
 Terminal launcher for local AI CLIs. Run `cli`, pick a tool, launch it.
 
-Supported: Codex, Claude, Antigravity, Cursor, Copilot, opencode. Missing tools show dimmed.
+Supported: Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, opencode CLI. Missing tools show dimmed.
 
 > Pre-release (0.1.0).
 
@@ -36,7 +36,7 @@ Node 18+, a TrueColor terminal, the target CLIs on PATH.
 
 ## Trademarks
 
-Unofficial, not affiliated with the listed tools. Names, logos, colors belong to their owners and are used only to identify what you launch. Open an issue to request changes.
+Unofficial, not affiliated with Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, opencode CLI or their makers. Names, logos, colors belong to their owners and are used only to identify what you launch. Open an issue to request changes.
 
 ## License
 
