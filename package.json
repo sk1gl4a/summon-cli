@@ -4,7 +4,7 @@
   "description": "Summon your AI CLI. Terminal launcher for Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, and opencode CLI.",
   "type": "module",
   "bin": {
-    "cli": "./bin/cli.mjs"
+    "summon": "./bin/cli.mjs"
   },
   "files": [
     "bin",

@@ -4,7 +4,7 @@
   <img src="assets/screenshot.png" alt="summon-cli picker" width="720">
 </p>
 
-Terminal launcher for local AI CLIs. Run `cli`, pick a tool, launch it.
+Terminal launcher for local AI CLIs. Run `summon`, pick a tool, launch it.
 
 Supported: Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot CLI, opencode CLI. Missing tools show dimmed.
 
@@ -13,20 +13,20 @@ Supported: Codex CLI, Claude Code, Antigravity CLI, Cursor CLI, GitHub Copilot C
 ## Install
 
 ```sh
-npm install -g .
-cli
+npm install -g summon-cli
+summon
 ```
 
 Move with arrows or `j/k` or `1-9`. `Enter` launches, `Esc` quits.
 
 ## Commands
 
-- `cli` open the picker (or your default)
-- `cli menu` always open the picker
-- `cli reorder` set the order
-- `cli default <tool>` launch one directly (`off` clears, no arg = pick)
-- `cli alias <name>` add another command name
-- `cli help`
+- `summon` open the picker (or your default)
+- `summon menu` always open the picker
+- `summon reorder` set the order
+- `summon default <tool>` launch one directly (`off` clears, no arg = pick)
+- `summon alias <name>` add another command name (e.g. `summon alias cli`)
+- `summon help`
 
 Flag: `--no-logo`. Args after `--` go to the launched tool.
 

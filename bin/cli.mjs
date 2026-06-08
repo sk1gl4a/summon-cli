@@ -11,7 +11,7 @@ import {render} from 'ink';
 import {App, ReorderApp, renderSnapshot, tools, orderTools} from '../src/app.mjs';
 import {loadConfig, saveConfig, configLocation} from '../src/config.mjs';
 
-const PROG = process.env.CLI_LEVEL_NAME || 'cli';
+const PROG = process.env.CLI_LEVEL_NAME || 'summon';
 const SCRIPT = fileURLToPath(import.meta.url);
 
 const passthroughIndex = process.argv.indexOf('--');
